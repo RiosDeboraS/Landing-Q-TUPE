@@ -1,0 +1,242 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <main>
+    <div class="character-container">
+      <div class="lips-wrapper" id="lipsWrapper">
+
+        <img
+          src="/labio.png"
+          alt="Labios Q Tupé"
+          class="lips-img"
+        />
+
+        <svg
+          viewBox="0 0 400 240"
+          xmlns="http://www.w3.org/2000/svg"
+          class="lips-svg"
+        >
+          <!-- OJO IZQUIERDO -->
+          <circle cx="162" cy="118" r="22" fill="white" />
+
+          <!-- OJO DERECHO -->
+          <circle cx="238" cy="118" r="22" fill="white" />
+
+          <!-- PUPILA IZQUIERDA -->
+          <circle id="leftPupil" cx="162" cy="118" r="11" fill="#1a1a1a" />
+
+          <!-- BRILLO IZQUIERDO -->
+          <circle id="leftShine" cx="168" cy="112" r="3.5" fill="white" />
+
+          <!-- PUPILA DERECHA -->
+          <circle id="rightPupil" cx="238" cy="118" r="11" fill="#1a1a1a" />
+
+          <!-- BRILLO DERECHO -->
+          <circle id="rightShine" cx="244" cy="112" r="3.5" fill="white" />
+
+          <!-- SONRISA -->
+          <path
+            d="M188 152 Q200 162 212 152"
+            stroke="#1a1a1a"
+            stroke-width="3"
+            fill="none"
+            stroke-linecap="round"
+          />
+        </svg>
+
+      </div>
+    </div>
+
+    <h1 class="headline">Holi, ¿Qué queres hacer hoy?</h1>
+
+    <div class="buttons">
+      <a href="#" class="btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="9" cy="21" r="1" />
+          <circle cx="20" cy="21" r="1" />
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+        </svg>
+        Comprar por la web
+      </a>
+
+      <a href="#" class="btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"
+          />
+        </svg>
+        Contactarme
+      </a>
+    </div>
+
+    <footer>
+      <p>Derechos reservados por <strong>Q' TUPÉ</strong></p>
+      <p>Creado por <strong>Nexar</strong> Estudio Creativo</p>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  const leftPupil  = document.getElementById('leftPupil');
+  const leftShine  = document.getElementById('leftShine');
+  const rightPupil = document.getElementById('rightPupil');
+  const rightShine = document.getElementById('rightShine');
+  const svg        = document.querySelector('.lips-svg');
+
+  const LEFT_EYE  = { cx: 162, cy: 118, maxMove: 9 };
+  const RIGHT_EYE = { cx: 238, cy: 118, maxMove: 9 };
+
+  function movePupil(pupilEl, shineEl, eye, mouseX, mouseY) {
+    const rect    = svg.getBoundingClientRect();
+    const viewBox = svg.viewBox.baseVal;
+    const scaleX  = viewBox.width  / rect.width;
+    const scaleY  = viewBox.height / rect.height;
+    const svgX    = (mouseX - rect.left) * scaleX;
+    const svgY    = (mouseY - rect.top)  * scaleY;
+    const dx      = svgX - eye.cx;
+    const dy      = svgY - eye.cy;
+    const dist    = Math.sqrt(dx * dx + dy * dy);
+    const ratio   = dist > eye.maxMove ? eye.maxMove / dist : 1;
+    const px      = eye.cx + dx * ratio;
+    const py      = eye.cy + dy * ratio;
+    pupilEl.setAttribute('cx', String(px));
+    pupilEl.setAttribute('cy', String(py));
+    shineEl.setAttribute('cx', String(px + 6));
+    shineEl.setAttribute('cy', String(py - 6));
+  }
+
+  function onPointerMove(x, y) {
+    movePupil(leftPupil,  leftShine,  LEFT_EYE,  x, y);
+    movePupil(rightPupil, rightShine, RIGHT_EYE, x, y);
+  }
+
+  document.addEventListener('mousemove', (e) => {
+    onPointerMove(e.clientX, e.clientY);
+  });
+
+  document.addEventListener('touchmove', (e) => {
+    onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+</script>
+
+<style>
+  main {
+    min-height: 100vh;
+    background-color: #f5ede6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif;
+  }
+
+  .character-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .lips-wrapper {
+    position: relative;
+    width: min(560px, 90vw);
+    filter: drop-shadow(0 10px 28px rgba(232, 96, 154, 0.28));
+    transition: transform 0.25s ease;
+  }
+
+  .lips-wrapper:hover {
+    transform: scale(1.03);
+  }
+
+  .lips-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .lips-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .headline {
+    color: #E8609A;
+    font-size: clamp(1.4rem, 4.5vw, 2.2rem);
+    font-weight: 800;
+    text-align: center;
+    margin: 0 0 32px;
+    letter-spacing: -0.02em;
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 32px;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    /* Mismo rosa para ambos, texto e íconos en crema del fondo */
+    background-color: #E8609A;
+    color: #f5ede6;
+    box-shadow: 0 4px 18px rgba(232, 96, 154, 0.38);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+
+  .btn svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .btn:hover {
+    background-color: #d4548b;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(232, 96, 154, 0.48);
+  }
+
+  footer {
+    margin-top: 40px;
+    text-align: center;
+    color: #E8609A;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    line-height: 1.7;
+  }
+
+  footer p { margin: 0; }
+
+  footer strong {
+    opacity: 1;
+    font-weight: 800;
+  }
+</style>
