@@ -1,14 +1,40 @@
+
 ---
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
+  <!-- Overlay de transición -->
+  <div id="shopTransitionOverlay" class="shop-overlay">
+    <div class="overlay-circles">
+      <div class="circle c1"></div>
+      <div class="circle c2"></div>
+      <div class="circle c3"></div>
+    </div>
+    <div class="overlay-content">
+      <div class="lipstick-icon">
+        <svg viewBox="0 0 60 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="55" width="20" height="40" rx="3" fill="#c94f82"/>
+          <rect x="18" y="48" width="24" height="12" rx="2" fill="#b03870"/>
+          <path d="M22 48 L22 20 Q30 8 38 20 L38 48 Z" fill="#e8688a"/>
+          <path d="M22 48 L22 28 Q30 16 38 28 L38 48 Z" fill="#f08098"/>
+        </svg>
+      </div>
+      <p class="overlay-text">Abriendo la tienda...</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
   <main>
     <div class="character-container">
       <div class="lips-wrapper" id="lipsWrapper">
 
         <img
-          src="/labio.png"
+          src="/labionexar-03 (1).png"
           alt="Labios Q Tupé"
           class="lips-img"
         />
@@ -20,22 +46,16 @@ import Layout from '../layouts/Layout.astro';
         >
           <!-- OJO IZQUIERDO -->
           <circle cx="162" cy="118" r="22" fill="white" />
-
           <!-- OJO DERECHO -->
           <circle cx="238" cy="118" r="22" fill="white" />
-
           <!-- PUPILA IZQUIERDA -->
           <circle id="leftPupil" cx="162" cy="118" r="11" fill="#1a1a1a" />
-
           <!-- BRILLO IZQUIERDO -->
           <circle id="leftShine" cx="168" cy="112" r="3.5" fill="white" />
-
           <!-- PUPILA DERECHA -->
           <circle id="rightPupil" cx="238" cy="118" r="11" fill="#1a1a1a" />
-
           <!-- BRILLO DERECHO -->
           <circle id="rightShine" cx="244" cy="112" r="3.5" fill="white" />
-
           <!-- SONRISA -->
           <path
             d="M188 152 Q200 162 212 152"
@@ -52,7 +72,12 @@ import Layout from '../layouts/Layout.astro';
     <h1 class="headline">Holi, ¿Qué queres hacer hoy?</h1>
 
     <div class="buttons">
-      <a href="#" class="btn">
+      <!-- BOTON WEB -->
+      <a
+        href="https://quetupe.tiendanegocio.com/"
+        class="btn transition-btn"
+        id="shopBtn"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -69,7 +94,12 @@ import Layout from '../layouts/Layout.astro';
         Comprar por la web
       </a>
 
-      <a href="#" class="btn">
+      <!-- BOTON WHATSAPP -->
+      <a
+        href="https://wa.me/595999123456"
+        target="_blank"
+        class="btn"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -83,24 +113,36 @@ import Layout from '../layouts/Layout.astro';
       </a>
     </div>
 
-    <footer>
-      <p>Derechos reservados por <strong>Q' TUPÉ</strong></p>
-      <p>Creado por <strong>Nexar</strong> Estudio Creativo</p>
+    <footer class="footer">
+      <div class="footer-logo">
+        <img src="/logowebdebora-16.png" alt="Q' TUPÉ Logo" />
+      </div>
+      <div class="footer-content">
+        <p>© 2025 <strong>Q' TUPÉ</strong>. Todos los derechos reservados.</p>
+        <p class="creator">Creado por <strong>Nexar Estudio Creativo</strong></p>
+      </div>
     </footer>
   </main>
 </Layout>
 
 <script>
-  const leftPupil  = document.getElementById('leftPupil');
-  const leftShine  = document.getElementById('leftShine');
-  const rightPupil = document.getElementById('rightPupil');
-  const rightShine = document.getElementById('rightShine');
-  const svg        = document.querySelector('.lips-svg');
+  // --- Movimiento de pupilas ---
+  const leftPupil  = document.getElementById('leftPupil')!;
+  const leftShine  = document.getElementById('leftShine')!;
+  const rightPupil = document.getElementById('rightPupil')!;
+  const rightShine = document.getElementById('rightShine')!;
+  const svg        = document.querySelector('.lips-svg') as SVGSVGElement;
 
   const LEFT_EYE  = { cx: 162, cy: 118, maxMove: 9 };
   const RIGHT_EYE = { cx: 238, cy: 118, maxMove: 9 };
 
-  function movePupil(pupilEl, shineEl, eye, mouseX, mouseY) {
+  function movePupil(
+    pupilEl: Element,
+    shineEl: Element,
+    eye: { cx: number; cy: number; maxMove: number },
+    mouseX: number,
+    mouseY: number
+  ) {
     const rect    = svg.getBoundingClientRect();
     const viewBox = svg.viewBox.baseVal;
     const scaleX  = viewBox.width  / rect.width;
@@ -119,24 +161,185 @@ import Layout from '../layouts/Layout.astro';
     shineEl.setAttribute('cy', String(py - 6));
   }
 
-  function onPointerMove(x, y) {
+  function onPointerMove(x: number, y: number) {
     movePupil(leftPupil,  leftShine,  LEFT_EYE,  x, y);
     movePupil(rightPupil, rightShine, RIGHT_EYE, x, y);
   }
 
-  document.addEventListener('mousemove', (e) => {
-    onPointerMove(e.clientX, e.clientY);
-  });
-
+  document.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
   document.addEventListener('touchmove', (e) => {
     onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
+
+  // --- Transición de la tienda ---
+  const shopBtn = document.getElementById('shopBtn')!;
+  const overlay = document.getElementById('shopTransitionOverlay')!;
+
+  shopBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const href = shopBtn.getAttribute('href')!;
+
+    overlay.classList.add('is-active');
+
+    setTimeout(() => {
+      window.location.href = href;
+    }, 1800);
+  });
 </script>
 
 <style>
+  /* ===== OVERLAY DE TRANSICIÓN ===== */
+  .shop-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .overlay-circles {
+    position: absolute;
+    inset: 0;
+  }
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    transform-origin: center;
+  }
+
+  .c1 {
+    width: 150vmax;
+    height: 150vmax;
+    top: 50%;
+    left: 50%;
+    margin-top: -75vmax;
+    margin-left: -75vmax;
+    background: #f9d0e3;
+  }
+
+  .c2 {
+    width: 130vmax;
+    height: 130vmax;
+    top: 50%;
+    left: 50%;
+    margin-top: -65vmax;
+    margin-left: -65vmax;
+    background: #f2a0c4;
+  }
+
+  .c3 {
+    width: 110vmax;
+    height: 110vmax;
+    top: 50%;
+    left: 50%;
+    margin-top: -55vmax;
+    margin-left: -55vmax;
+    background: #E471a8;
+  }
+
+  .overlay-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease 0.7s, transform 0.4s ease 0.7s;
+  }
+
+  .lipstick-icon svg {
+    width: 64px;
+    height: auto;
+    filter: drop-shadow(0 4px 12px rgba(201, 79, 130, 0.4));
+    animation: none;
+  }
+
+  .overlay-text {
+    color: #fff;
+    font-family: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  .loading-dots {
+    display: flex;
+    gap: 8px;
+  }
+
+  .loading-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.8);
+    animation: none;
+  }
+
+  /* Estado activo del overlay */
+  .shop-overlay.is-active {
+    pointer-events: all;
+  }
+
+  .shop-overlay.is-active .c1 {
+    animation: expandCircle 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0s forwards;
+  }
+
+  .shop-overlay.is-active .c2 {
+    animation: expandCircle 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards;
+  }
+
+  .shop-overlay.is-active .c3 {
+    animation: expandCircle 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+  }
+
+  .shop-overlay.is-active .overlay-content {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .shop-overlay.is-active .lipstick-icon svg {
+    animation: lipstickBounce 0.6s ease 0.8s both;
+  }
+
+  .shop-overlay.is-active .loading-dots span:nth-child(1) {
+    animation: dotPulse 0.6s ease 1s infinite alternate;
+  }
+
+  .shop-overlay.is-active .loading-dots span:nth-child(2) {
+    animation: dotPulse 0.6s ease 1.2s infinite alternate;
+  }
+
+  .shop-overlay.is-active .loading-dots span:nth-child(3) {
+    animation: dotPulse 0.6s ease 1.4s infinite alternate;
+  }
+
+  @keyframes expandCircle {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+  }
+
+  @keyframes lipstickBounce {
+    0%   { transform: translateY(10px) rotate(-8deg); opacity: 0; }
+    60%  { transform: translateY(-6px) rotate(4deg); opacity: 1; }
+    100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  }
+
+  @keyframes dotPulse {
+    from { opacity: 0.3; transform: scale(0.8); }
+    to   { opacity: 1;   transform: scale(1.2); }
+  }
+
+  /* ===== PÁGINA PRINCIPAL ===== */
   main {
     min-height: 100vh;
-    background-color: #f5ede6;
+    background-color: #f7ebdf;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -178,7 +381,7 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .headline {
-    color: #E8609A;
+    color: #E471a8;
     font-size: clamp(1.4rem, 4.5vw, 2.2rem);
     font-weight: 800;
     text-align: center;
@@ -205,9 +408,8 @@ import Layout from '../layouts/Layout.astro';
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0.01em;
-    /* Mismo rosa para ambos, texto e íconos en crema del fondo */
-    background-color: #E8609A;
-    color: #f5ede6;
+    background-color: #E471a8;
+    color: #f7ebdf;
     box-shadow: 0 4px 18px rgba(232, 96, 154, 0.38);
     transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   }
@@ -219,24 +421,88 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .btn:hover {
-    background-color: #d4548b;
+    background-color: #E471a8;
     transform: translateY(-2px);
     box-shadow: 0 8px 26px rgba(232, 96, 154, 0.48);
   }
 
-  footer {
-    margin-top: 40px;
-    text-align: center;
-    color: #E8609A;
-    font-size: 0.85rem;
-    opacity: 0.7;
-    line-height: 1.7;
+  .transition-btn {
+    position: relative;
+    overflow: hidden;
   }
 
-  footer p { margin: 0; }
+  .transition-btn::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease;
+  }
 
-  footer strong {
-    opacity: 1;
-    font-weight: 800;
+  .transition-btn:active::after {
+    transform: translate(-50%, -50%) scale(18);
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    position: relative;
+    width: 100%;
+    margin-top: 5rem;
+    padding: 3rem 2rem;
+    background: #f5e9df;
+    border-top: 2px solid rgba(217, 95, 157, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .footer-logo {
+    position: absolute;
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .footer-logo img {
+    width: 90px;
+    opacity: 0.95;
+  }
+
+  .footer-content {
+    text-align: center;
+    color: #c06b97;
+  }
+
+  .footer-content p {
+    margin: 0.4rem 0;
+    font-size: 0.95rem;
+  }
+
+  .footer strong {
+    color: #d95f9d;
+  }
+
+  @media (max-width: 768px) {
+    .footer {
+      padding-top: 5rem;
+      flex-direction: column;
+    }
+
+    .footer-logo {
+      position: absolute;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .footer-logo img {
+      width: 70px;
+    }
   }
 </style>
